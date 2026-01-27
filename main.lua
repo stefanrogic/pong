@@ -13,6 +13,10 @@ VIRTUAL_HEIGHT = 243
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')  -- Set default filter to nearest for pixel art style
 
+    small_font = love.graphics.newFont('fonts/scientifica.ttf', 8)  -- Load font
+
+    love.graphics.setFont(small_font)  -- Set the loaded font as the current font
+
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, { -- Set the window size and options (could be done separate in config.lua) 
         -- Window configuration options
         fullscreen = false,
@@ -36,13 +40,39 @@ end
 ]]
 function love.draw()
     push:apply('start')  -- Begin rendering at virtual resolution
+
+    love.graphics.clear(40/255, 45/255, 52/255, 255)  -- Clear the screen with a specific color
     
     love.graphics.printf(       -- Draws text on the screen
         "Hello, World!",        -- Text to print
         0,                      -- X position
-        VIRTUAL_HEIGHT / 2 - 6, -- Y position (-6 is half the font height for vertical centering)
+        10,                     -- Y position
         VIRTUAL_WIDTH,          -- Maximum width 
         "center"                -- Alignment, it can be "left", "right", or "center"
+    )
+
+    love.graphics.rectangle(    -- Draw a rectangle (paddle) for first player
+        'fill',                 -- Mode, can be 'fill' or 'line'
+        10,                     -- X position (centered)
+        30,                     -- Y position
+        5,                      -- Width
+        20                      -- Height
+    )
+
+    love.graphics.rectangle(    -- Draw a rectangle (paddle) for second player
+        'fill',                 -- Mode, can be 'fill' or 'line'
+        VIRTUAL_WIDTH - 10 - 5, -- X position (centered)
+        VIRTUAL_HEIGHT - 50,    -- Y position
+        5,                      -- Width
+        20                      -- Height
+    )
+
+    love.graphics.rectangle(    -- Draw a ball
+        'fill',                 -- Mode, can be 'fill' or 'line'
+        VIRTUAL_WIDTH / 2 - 2,  -- X position (centered)
+        VIRTUAL_HEIGHT / 2 - 2, -- Y position (centered)
+        4,                      -- Width
+        4                       -- Height
     )
 
     push:apply('end')  -- End rendering at virtual resolution
