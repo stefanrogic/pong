@@ -1,4 +1,4 @@
-push = require 'lib/push'  -- Import the push library for virtual resolution handling
+push = require 'push'  -- Import the push library for virtual resolution handling
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
