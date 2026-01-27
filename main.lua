@@ -11,14 +11,15 @@ VIRTUAL_HEIGHT = 243
     Used to initialize the game.
 ]]
 function love.load()
+    love.window.setTitle('Pong')  -- Set the window title
     love.graphics.setDefaultFilter('nearest', 'nearest')  -- Set default filter to nearest for pixel art style
 
     small_font = love.graphics.newFont('fonts/font.ttf', 8)  -- Load font
 
     love.graphics.setFont(small_font)  -- Set the loaded font as the current font
 
-    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, { -- Set the window size and options (could be done separate in config.lua) 
-        -- Window configuration options
+    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, { -- Set the window size and options) 
+        -- Window configuration options, could be done separate in config.lua
         fullscreen = false,
         resizable = false,
         vsync = true
