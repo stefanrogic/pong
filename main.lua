@@ -13,7 +13,7 @@ VIRTUAL_HEIGHT = 243
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')  -- Set default filter to nearest for pixel art style
 
-    small_font = love.graphics.newFont('fonts/scientifica.ttf', 8)  -- Load font
+    small_font = love.graphics.newFont('fonts/font.ttf', 8)  -- Load font
 
     love.graphics.setFont(small_font)  -- Set the loaded font as the current font
 
