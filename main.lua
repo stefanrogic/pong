@@ -11,13 +11,15 @@ WINDOW_HEIGHT = 720
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
--- Paddle dimensions and speed
-PADDLE_SPEED = 200 -- Multiplied by dt to get pixels per second
+-- Paddle constants
+PADDLE_SPEED = 400 -- Multiplied by dt to get pixels per second
 PADDLE_HEIGHT = 50
 PADDLE_WIDTH = 5
 
--- Ball dimensions
-BALL_SIZE = 4
+-- Ball constants
+BALL_SIZE = 4 -- Width and height of the ball
+BALL_START_SPEED = 200 -- Initial speed of the ball
+BALL_ACCELERATION = 1.03 -- Ball speed increase factor on paddle hit
 
 --[[
     Runs when the game first starts up, only once. 
@@ -68,8 +70,8 @@ function love.keypressed(key)
         if gameState == 'start' then
             gameState = 'play'  -- Change state to play
             -- Give ball initial velocity when starting
-            ball.dx = math.random(2) == 1 and 100 or -100
-            ball.dy = math.random(-50, 50)
+            ball.dx = math.random(2) == 1 and BALL_START_SPEED or -BALL_START_SPEED
+            ball.dy = BALL_START_SPEED
         elseif gameState == 'play' then
             gameState = 'start'  -- Change state to start
             ball:reset()         -- Reset ball using its method
@@ -129,6 +131,45 @@ end
     'dt' is the amount of time (in seconds) since the last update.
 ]]
 function love.update(dt)
+    -- Ball movement and collision
+    if gameState == 'play' then
+        if ball:colides(playerOne) then
+            ball.dx = -ball.dx * BALL_ACCELERATION  -- Reverse horizontal direction and increase speed
+            ball.x = playerOne.x + playerOne.width  -- Reposition ball outside paddle (center-based)
+
+            -- Randomize ball's vertical velocity
+            if ball.dy < 0 then
+                ball.dy = -ball.dx
+            else
+                ball.dy = ball.dx
+            end
+        end
+
+        if ball:colides(playerTwo) then
+            ball.dx = -ball.dx * BALL_ACCELERATION  -- Reverse horizontal direction and increase speed
+            ball.x = playerTwo.x - ball.width       -- Reposition ball outside paddle (center-based)
+
+            -- Randomize ball's vertical velocity
+            if ball.dy < 0 then
+                ball.dy = ball.dx
+            else
+                ball.dy = -ball.dx
+            end
+        end
+
+        if ball.y <= 0 then
+            ball.y = 0
+            ball.dy = -ball.dy  -- Reverse vertical direction
+        end
+
+        if ball.y >= VIRTUAL_HEIGHT - ball.height then
+            ball.y = VIRTUAL_HEIGHT - ball.height
+            ball.dy = -ball.dy  -- Reverse vertical direction
+        end
+
+        ball:update(dt) -- Update ball position based on its velocity
+    end
+
     -- Player one movement
     if love.keyboard.isDown('w') then
         playerOne.dy = -PADDLE_SPEED  -- Set velocity to move up
@@ -150,8 +191,4 @@ function love.update(dt)
     -- Always update paddles (they check their own dy to move)
     playerOne:update(dt)
     playerTwo:update(dt)
-
-    if gameState == 'play' then
-        ball:update(dt) -- Update ball position based on its velocity
-    end
 end
