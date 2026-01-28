@@ -1,15 +1,22 @@
+Class = require 'class'  -- Import the class library for OOP
 push = require 'push'  -- Import the push library for virtual resolution handling
+require 'Paddle'  -- Import the Paddle class
+require 'Ball'    -- Import the Ball class
 
+-- Window dimensions
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
+-- Virtual resolution dimensions (smaller than actual window size, we use it to give a retro feel)
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
+-- Paddle dimensions and speed
 PADDLE_SPEED = 200 -- Multiplied by dt to get pixels per second
-PADDLE_HEIGHT = 20
+PADDLE_HEIGHT = 50
 PADDLE_WIDTH = 5
 
+-- Ball dimensions
 BALL_SIZE = 4
 
 --[[
@@ -23,9 +30,6 @@ function love.load()
     -- Seed the RNG so that calls to random are always random
     -- It uses current time, since that will vary on each execution
     math.randomseed(os.time())
-
-    -- State 
-    gameState = 'start'  -- Can be 'start', 'serve', 'play', or 'done'
 
     -- Fonts
     smallFont = love.graphics.newFont('fonts/font.ttf', 8)
@@ -42,17 +46,13 @@ function love.load()
     playerOneScore = 0  -- Initialize player one score
     playerTwoScore = 0  -- Initialize player two score
 
-    -- Only Y because paddles only move up and down
-    playerOneY = 30 -- Initial Y position for player one paddle
-    playerTwoY = VIRTUAL_HEIGHT - 50 -- Initial Y position for player two paddle
+    -- Initialize player paddles and ball
+    playerOne = Paddle(10, VIRTUAL_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+    playerTwo = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, BALL_SIZE)
 
-    -- Ball position
-    ballX = VIRTUAL_WIDTH / 2 - 2  -- Initial X position for the ball (centered)
-    ballY = VIRTUAL_HEIGHT / 2 - 2  -- Initial Y position for the ball (centered)
-
-    -- Ball velocity
-    ballDX = math.random(2) == 1 and 100 or -100  -- Initial horizontal speed of the ball
-    ballDY = math.random(-50, 50)  -- Initial vertical speed of the ball
+    -- State 
+    gameState = 'start'  -- Can be 'start', 'serve', 'play', or 'done'
 end
 
 --[[
@@ -67,14 +67,14 @@ function love.keypressed(key)
     if key == 'enter' or key == 'return' then
         if gameState == 'start' then
             gameState = 'play'  -- Change state to play
+            -- Give ball initial velocity when starting
+            ball.dx = math.random(2) == 1 and 100 or -100
+            ball.dy = math.random(-50, 50)
         elseif gameState == 'play' then
             gameState = 'start'  -- Change state to start
-            -- Reset ball position
-            ballX = VIRTUAL_WIDTH / 2 - 2
-            ballY = VIRTUAL_HEIGHT / 2 - 2
-            -- Reset ball velocity
-            ballDX = math.random(2) == 1 and 100 or -100
-            ballDY = math.random(-50, 50)
+            ball:reset()         -- Reset ball using its method
+            playerOne:reset()       -- Reset paddles using their method
+            playerTwo:reset()       -- Reset paddles using their method
         end
     end
 end
@@ -108,31 +108,11 @@ function love.draw()
         VIRTUAL_HEIGHT / 3            -- Y position
     )
 
-    love.graphics.rectangle(          -- Draw a rectangle (paddle) for first player
-        'fill',                       -- Mode, can be 'fill' or 'line'
-        10,                           -- X position (centered)
-        playerOneY,                   -- Y position
-        PADDLE_WIDTH,                -- Width
-        PADDLE_HEIGHT                -- Height
-    )
+    playerOne:render()  -- Render player one's paddle
+    playerTwo:render()  -- Render player two's paddle
+    ball:render()       -- Render the ball
 
-    love.graphics.rectangle(          -- Draw a rectangle (paddle) for second player
-        'fill',                       -- Mode, can be 'fill' or 'line'
-        VIRTUAL_WIDTH - 10 - PADDLE_WIDTH, -- X position (centered)
-        playerTwoY,                   -- Y position
-        PADDLE_WIDTH,                -- Width
-        PADDLE_HEIGHT                -- Height
-    )
-
-    love.graphics.rectangle(          -- Draw a ball
-        'fill',                       -- Mode, can be 'fill' or 'line'
-        ballX,                        -- X position (centered)
-        ballY,                        -- Y position (centered)
-        BALL_SIZE,                    -- Width
-        BALL_SIZE                     -- Height
-    )
-
-    push:apply('end')  -- End rendering at virtual resolution
+    push:apply('end')   -- End rendering at virtual resolution
 end
 
 --[[
@@ -142,23 +122,27 @@ end
 function love.update(dt)
     -- Player one movement
     if love.keyboard.isDown('w') then
-        -- Math.max ensures the paddle doesn't go above the screen when moving up
-        playerOneY = math.max(0, playerOneY - PADDLE_SPEED * dt)  -- Move paddle up
+        playerOne.dy = -PADDLE_SPEED  -- Set velocity to move up
     elseif love.keyboard.isDown('s') then
-        -- Math.min ensures the paddle doesn't go below the screen when moving down
-        playerOneY = math.min(VIRTUAL_HEIGHT - PADDLE_HEIGHT, playerOneY + PADDLE_SPEED * dt)  -- Move paddle down
+        playerOne.dy = PADDLE_SPEED   -- Set velocity to move down
+    else
+        playerOne.dy = 0              -- Stop moving if no key pressed
     end
 
     -- Player two movement
     if love.keyboard.isDown('up') then
-        playerTwoY = math.max(0, playerTwoY - PADDLE_SPEED * dt)  -- Move paddle up
+        playerTwo.dy = -PADDLE_SPEED  -- Set velocity to move up
     elseif love.keyboard.isDown('down') then
-        playerTwoY = math.min(VIRTUAL_HEIGHT - PADDLE_HEIGHT, playerTwoY + PADDLE_SPEED * dt)  -- Move paddle down
+        playerTwo.dy = PADDLE_SPEED   -- Set velocity to move down
+    else
+        playerTwo.dy = 0              -- Stop moving if no key pressed
     end
 
+    -- Always update paddles (they check their own dy to move)
+    playerOne:update(dt)
+    playerTwo:update(dt)
+
     if gameState == 'play' then
-        -- Update ball position based on its velocity
-        ballX = ballX + ballDX * dt
-        ballY = ballY + ballDY * dt
+        ball:update(dt) -- Update ball position based on its velocity
     end
 end
