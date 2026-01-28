@@ -6,8 +6,11 @@ WINDOW_HEIGHT = 720
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
--- Multiplied by dt to get pixels per second
-PADDLE_SPEED = 200
+PADDLE_SPEED = 200 -- Multiplied by dt to get pixels per second
+PADDLE_HEIGHT = 20
+PADDLE_WIDTH = 5
+
+BALL_SIZE = 4
 
 --[[
     Runs when the game first starts up, only once. 
@@ -16,6 +19,13 @@ PADDLE_SPEED = 200
 function love.load()
     love.window.setTitle('Pong')  -- Set the window title
     love.graphics.setDefaultFilter('nearest', 'nearest')  -- Set default filter to nearest for pixel art style
+
+    -- Seed the RNG so that calls to random are always random
+    -- It uses current time, since that will vary on each execution
+    math.randomseed(os.time())
+
+    -- State 
+    gameState = 'start'  -- Can be 'start', 'serve', 'play', or 'done'
 
     -- Fonts
     smallFont = love.graphics.newFont('fonts/font.ttf', 8)
@@ -35,6 +45,14 @@ function love.load()
     -- Only Y because paddles only move up and down
     playerOneY = 30 -- Initial Y position for player one paddle
     playerTwoY = VIRTUAL_HEIGHT - 50 -- Initial Y position for player two paddle
+
+    -- Ball position
+    ballX = VIRTUAL_WIDTH / 2 - 2  -- Initial X position for the ball (centered)
+    ballY = VIRTUAL_HEIGHT / 2 - 2  -- Initial Y position for the ball (centered)
+
+    -- Ball velocity
+    ballDX = math.random(2) == 1 and 100 or -100  -- Initial horizontal speed of the ball
+    ballDY = math.random(-50, 50)  -- Initial vertical speed of the ball
 end
 
 --[[
@@ -44,6 +62,20 @@ end
 function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()    -- Terminate the game
+    end
+
+    if key == 'enter' or key == 'return' then
+        if gameState == 'start' then
+            gameState = 'play'  -- Change state to play
+        elseif gameState == 'play' then
+            gameState = 'start'  -- Change state to start
+            -- Reset ball position
+            ballX = VIRTUAL_WIDTH / 2 - 2
+            ballY = VIRTUAL_HEIGHT / 2 - 2
+            -- Reset ball velocity
+            ballDX = math.random(2) == 1 and 100 or -100
+            ballDY = math.random(-50, 50)
+        end
     end
 end
 
@@ -80,24 +112,24 @@ function love.draw()
         'fill',                       -- Mode, can be 'fill' or 'line'
         10,                           -- X position (centered)
         playerOneY,                   -- Y position
-        5,                            -- Width
-        20                            -- Height
+        PADDLE_WIDTH,                -- Width
+        PADDLE_HEIGHT                -- Height
     )
 
     love.graphics.rectangle(          -- Draw a rectangle (paddle) for second player
         'fill',                       -- Mode, can be 'fill' or 'line'
-        VIRTUAL_WIDTH - 10 - 5,       -- X position (centered)
+        VIRTUAL_WIDTH - 10 - PADDLE_WIDTH, -- X position (centered)
         playerTwoY,                   -- Y position
-        5,                            -- Width
-        20                            -- Height
+        PADDLE_WIDTH,                -- Width
+        PADDLE_HEIGHT                -- Height
     )
 
     love.graphics.rectangle(          -- Draw a ball
         'fill',                       -- Mode, can be 'fill' or 'line'
-        VIRTUAL_WIDTH / 2 - 2,        -- X position (centered)
-        VIRTUAL_HEIGHT / 2 - 2,       -- Y position (centered)
-        4,                            -- Width
-        4                             -- Height
+        ballX,                        -- X position (centered)
+        ballY,                        -- Y position (centered)
+        BALL_SIZE,                    -- Width
+        BALL_SIZE                     -- Height
     )
 
     push:apply('end')  -- End rendering at virtual resolution
@@ -110,15 +142,23 @@ end
 function love.update(dt)
     -- Player one movement
     if love.keyboard.isDown('w') then
-        playerOneY = playerOneY - PADDLE_SPEED * dt  -- Move paddle up
+        -- Math.max ensures the paddle doesn't go above the screen when moving up
+        playerOneY = math.max(0, playerOneY - PADDLE_SPEED * dt)  -- Move paddle up
     elseif love.keyboard.isDown('s') then
-        playerOneY = playerOneY + PADDLE_SPEED * dt  -- Move paddle down
+        -- Math.min ensures the paddle doesn't go below the screen when moving down
+        playerOneY = math.min(VIRTUAL_HEIGHT - PADDLE_HEIGHT, playerOneY + PADDLE_SPEED * dt)  -- Move paddle down
     end
 
     -- Player two movement
     if love.keyboard.isDown('up') then
-        playerTwoY = playerTwoY - PADDLE_SPEED * dt  -- Move paddle up
+        playerTwoY = math.max(0, playerTwoY - PADDLE_SPEED * dt)  -- Move paddle up
     elseif love.keyboard.isDown('down') then
-        playerTwoY = playerTwoY + PADDLE_SPEED * dt  -- Move paddle down
+        playerTwoY = math.min(VIRTUAL_HEIGHT - PADDLE_HEIGHT, playerTwoY + PADDLE_SPEED * dt)  -- Move paddle down
+    end
+
+    if gameState == 'play' then
+        -- Update ball position based on its velocity
+        ballX = ballX + ballDX * dt
+        ballY = ballY + ballDY * dt
     end
 end
