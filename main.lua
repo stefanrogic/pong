@@ -48,6 +48,7 @@ function love.load()
 
     -- State 
     gameState = 'start'  -- Can be 'start', 'serve', 'play', or 'done'
+    fpsState = "off"
 end
 
 --[[
@@ -83,7 +84,9 @@ function love.draw()
     playerTwo:render()  -- Render player two's paddle
     ball:render()       -- Render the ball
 
-    displayFPS()        -- Display FPS for debugging
+    if fpsState == "on" then
+        displayFPS()        -- Display FPS for debugging
+    end
 
     push:apply('end')   -- End rendering at virtual resolution
 end

@@ -27,4 +27,12 @@ function love.keypressed(key)
             playerTwo:reset()       -- Reset paddles using their method
         end
     end
+
+    if key == '`' then
+        if fpsState == "on" then
+            fpsState = "off"
+        else
+            fpsState = "on"
+        end
+    end
 end
