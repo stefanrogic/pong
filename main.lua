@@ -80,15 +80,15 @@ function love.draw()
         VIRTUAL_HEIGHT / 3            -- Y position
     )
 
-    playerOne:render()  -- Render player one's paddle
-    playerTwo:render()  -- Render player two's paddle
-    ball:render()       -- Render the ball
+    playerOne:render()                -- Render player one's paddle
+    playerTwo:render()                -- Render player two's paddle
+    ball:render()                     -- Render the ball
 
     if fpsState == "on" then
-        displayFPS()        -- Display FPS for debugging
+        displayFPS()                  -- Display FPS for debugging
     end
 
-    push:apply('end')   -- End rendering at virtual resolution
+    push:apply('end')                 -- End rendering at virtual resolution
 end
 
 --[[
