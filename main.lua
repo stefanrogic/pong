@@ -17,7 +17,7 @@ PADDLE_HEIGHT = 50
 PADDLE_WIDTH = 5
 
 -- Ball dimensions
-BALL_SIZE = 4
+BALL_SIZE = 50
 
 --[[
     Runs when the game first starts up, only once. 

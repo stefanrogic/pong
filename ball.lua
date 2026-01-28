@@ -17,12 +17,12 @@ function Ball:update(dt)
 end
 
 function Ball:render()
-    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)  -- Draw the ball as a filled rectangle
+    love.graphics.rectangle('fill', self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)  -- Draw the ball as a filled rectangle
 end
 
 function Ball:reset()
-    self.x = VIRTUAL_WIDTH / 2 - 2
-    self.y = VIRTUAL_HEIGHT / 2 - 2
+    self.x = VIRTUAL_WIDTH / 2 - self.width / 2
+    self.y = VIRTUAL_HEIGHT / 2 - self.height / 2
     self.dx = 0
     self.dy = 0
 end
