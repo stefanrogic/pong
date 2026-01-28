@@ -79,6 +79,13 @@ function love.keypressed(key)
     end
 end
 
+function displayFPS()
+    love.graphics.setFont(smallFont)  -- Set the font to smallFont
+    love.graphics.setColor(0, 1, 0, 1) -- Set color to green
+    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10) -- Print FPS at (10,10)
+    love.graphics.setColor(1, 1, 1, 1) -- Reset color to white
+end
+
 --[[
     Called each frame after update, used to draw things to the screen.
 ]]
@@ -111,6 +118,8 @@ function love.draw()
     playerOne:render()  -- Render player one's paddle
     playerTwo:render()  -- Render player two's paddle
     ball:render()       -- Render the ball
+
+    displayFPS()        -- Display FPS for debugging
 
     push:apply('end')   -- End rendering at virtual resolution
 end
