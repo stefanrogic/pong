@@ -44,7 +44,7 @@ function love.load()
     -- Initialize player paddles and ball
     playerOne = Paddle(10, VIRTUAL_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT)
     playerTwo = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT)
-    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, BALL_SIZE)
+    ball = Ball(VIRTUAL_WIDTH / 2 - BALL_SIZE / 2, VIRTUAL_HEIGHT / 2 - BALL_SIZE / 2, BALL_SIZE)
 
     -- State 
     gameState = 'start'  -- Can be 'start', 'serve', 'play', or 'done'
@@ -101,25 +101,11 @@ function love.update(dt)
         if ball:colides(playerOne) then
             ball.dx = -ball.dx * BALL_ACCELERATION  -- Reverse horizontal direction and increase speed
             ball.x = playerOne.x + playerOne.width  -- Reposition ball outside paddle (center-based)
-
-            -- Randomize ball's vertical velocity
-            if ball.dy < 0 then
-                ball.dy = -ball.dx
-            else
-                ball.dy = ball.dx
-            end
         end
 
         if ball:colides(playerTwo) then
             ball.dx = -ball.dx * BALL_ACCELERATION  -- Reverse horizontal direction and increase speed
             ball.x = playerTwo.x - ball.width       -- Reposition ball outside paddle (center-based)
-
-            -- Randomize ball's vertical velocity
-            if ball.dy < 0 then
-                ball.dy = ball.dx
-            else
-                ball.dy = -ball.dx
-            end
         end
 
         if ball.y <= 0 then

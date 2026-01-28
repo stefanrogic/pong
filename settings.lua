@@ -5,5 +5,5 @@ PADDLE_WIDTH = 5
 
 -- Ball constants
 BALL_SIZE = 10 -- Width and height of the ball
-BALL_START_SPEED = 200 -- Initial speed of the ball
+BALL_SPEED = 50 -- Initial speed of the ball
 BALL_ACCELERATION = 1.03 -- Ball speed increase factor on paddle hit

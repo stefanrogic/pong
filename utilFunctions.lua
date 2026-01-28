@@ -18,8 +18,8 @@ function love.keypressed(key)
         if gameState == 'start' then
             gameState = 'play'  -- Change state to play
             -- Give ball initial velocity when starting
-            ball.dx = math.random(2) == 1 and BALL_START_SPEED or -BALL_START_SPEED
-            ball.dy = BALL_START_SPEED
+            ball.dx = math.random(2) == 1 and BALL_SPEED or -BALL_SPEED
+            ball.dy = BALL_SPEED
         elseif gameState == 'play' then
             gameState = 'start'  -- Change state to start
             ball:reset()         -- Reset ball using its method
