@@ -1,7 +1,7 @@
 Class = require 'class'  -- Import the class library for OOP
 push = require 'push'  -- Import the push library for virtual resolution handling
-require 'Paddle'  -- Import the Paddle class
-require 'Ball'    -- Import the Ball class
+require 'paddle'  -- Import the Paddle class
+require 'ball'    -- Import the Ball class
 
 -- Window dimensions
 WINDOW_WIDTH = 1280
