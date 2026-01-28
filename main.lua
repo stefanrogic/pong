@@ -1,7 +1,10 @@
 Class = require 'class'  -- Import the class library for OOP
 push = require 'push'  -- Import the push library for virtual resolution handling
-require 'paddle'  -- Import the Paddle class
-require 'ball'    -- Import the Ball class
+
+require 'paddle'
+require 'ball'  
+require 'utilFunctions' 
+require 'settings'  
 
 -- Window dimensions
 WINDOW_WIDTH = 1280
@@ -10,16 +13,6 @@ WINDOW_HEIGHT = 720
 -- Virtual resolution dimensions (smaller than actual window size, we use it to give a retro feel)
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
-
--- Paddle constants
-PADDLE_SPEED = 400 -- Multiplied by dt to get pixels per second
-PADDLE_HEIGHT = 50
-PADDLE_WIDTH = 5
-
--- Ball constants
-BALL_SIZE = 4 -- Width and height of the ball
-BALL_START_SPEED = 200 -- Initial speed of the ball
-BALL_ACCELERATION = 1.03 -- Ball speed increase factor on paddle hit
 
 --[[
     Runs when the game first starts up, only once. 
@@ -55,37 +48,6 @@ function love.load()
 
     -- State 
     gameState = 'start'  -- Can be 'start', 'serve', 'play', or 'done'
-end
-
---[[
-    Function is called whenever a key is pressed.
-    In this case we're using it to quit the game.
-]]
-function love.keypressed(key)
-    if key == 'escape' then
-        love.event.quit()    -- Terminate the game
-    end
-
-    if key == 'enter' or key == 'return' then
-        if gameState == 'start' then
-            gameState = 'play'  -- Change state to play
-            -- Give ball initial velocity when starting
-            ball.dx = math.random(2) == 1 and BALL_START_SPEED or -BALL_START_SPEED
-            ball.dy = BALL_START_SPEED
-        elseif gameState == 'play' then
-            gameState = 'start'  -- Change state to start
-            ball:reset()         -- Reset ball using its method
-            playerOne:reset()       -- Reset paddles using their method
-            playerTwo:reset()       -- Reset paddles using their method
-        end
-    end
-end
-
-function displayFPS()
-    love.graphics.setFont(smallFont)  -- Set the font to smallFont
-    love.graphics.setColor(0, 1, 0, 1) -- Set color to green
-    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10) -- Print FPS at (10,10)
-    love.graphics.setColor(1, 1, 1, 1) -- Reset color to white
 end
 
 --[[

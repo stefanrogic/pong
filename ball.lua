@@ -17,7 +17,7 @@ function Ball:update(dt)
 end
 
 function Ball:render()
-    love.graphics.rectangle('fill', self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)  -- Draw the ball as a filled rectangle
+    love.graphics.circle('fill', self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)  -- Draw the ball
 end
 
 function Ball:colides(paddle)
