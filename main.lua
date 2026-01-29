@@ -72,7 +72,13 @@ function love.draw()
     -- Play background music
     sounds['music']:setLooping(true)
     sounds['music']:setVolume(0.05)
-    sounds['music']:play()
+    
+    -- Pause music if game is paused
+    if gameState ~= 'pause' then
+        sounds['music']:play()
+    else 
+        sounds['music']:pause()
+    end
 
     love.graphics.clear(40/255, 45/255, 52/255, 255)  -- Clear the screen with a specific color
     love.graphics.setFont(scoreFont)  -- Set the score font
