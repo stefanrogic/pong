@@ -19,6 +19,7 @@ VIRTUAL_HEIGHT = 243
     Used to initialize the game.
 ]]
 function love.load()
+    love.window.setIcon(love.image.newImageData('images/icon.png')) -- Set window icon
     love.window.setTitle('Pong')  -- Set the window title
     love.graphics.setDefaultFilter('nearest', 'nearest')  -- Set default filter to nearest for pixel art style
 
