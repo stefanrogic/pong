@@ -115,15 +115,16 @@ function love.draw()
 
     -- When game is over display winning message
     if gameState == 'done' then
-        love.graphics.setFont(smallFont)  -- Set font to smallFont
+        love.graphics.setFont(largeFont)  
 
         if playerOneScore >= WINNING_SCORE then
-            love.graphics.printf("Player One Wins", 0, VIRTUAL_HEIGHT / 2 - 10, VIRTUAL_WIDTH, 'center')
+            love.graphics.printf("Player One Wins", 0, VIRTUAL_HEIGHT / 2 - 15, VIRTUAL_WIDTH, 'center')
         else
-            love.graphics.printf("Player Two Wins", 0, VIRTUAL_HEIGHT / 2 - 10, VIRTUAL_WIDTH, 'center')
+            love.graphics.printf("Player Two Wins", 0, VIRTUAL_HEIGHT / 2 - 15, VIRTUAL_WIDTH, 'center')
         end
 
-        love.graphics.printf("Press Enter to Play Again", 0, VIRTUAL_HEIGHT / 2 + 10, VIRTUAL_WIDTH, 'center')
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Press Enter to Play Again", 0, VIRTUAL_HEIGHT / 2 + 5, VIRTUAL_WIDTH, 'center')
     end
 
     playerOne:render()              
@@ -146,10 +147,10 @@ function love.draw()
     end
 
     if gameState == 'pause' then
-        love.graphics.setFont(largeFont)  -- Set font to largeFont
-        love.graphics.printf("Game Paused", 0, VIRTUAL_HEIGHT - 70, VIRTUAL_WIDTH, 'center')
-        love.graphics.printf("Press R to Restart", 0, VIRTUAL_HEIGHT - 50, VIRTUAL_WIDTH, 'center')
-        love.graphics.printf("Press Q to Quit", 0, VIRTUAL_HEIGHT - 30, VIRTUAL_WIDTH, 'center')
+        love.graphics.setFont(largeFont)
+        love.graphics.printf("Game Paused", 0, VIRTUAL_HEIGHT - 50, VIRTUAL_WIDTH, 'center')
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("[R]estart [Q]uit", 0, VIRTUAL_HEIGHT - 30, VIRTUAL_WIDTH, 'center')
     end
 
     if fpsState == "on" then
