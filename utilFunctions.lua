@@ -19,7 +19,29 @@ end
 ]]
 function love.keypressed(key)
     if key == 'escape' then
-        love.event.quit()    -- Terminate the game
+        if gameState ~= 'pause' then
+            gameState = 'pause'
+            sounds['wall_hit']:play()
+        else 
+            if ball.dx == 0 and ball.dy == 0 then
+                if playerOneScore > 0 or playerTwoScore > 0 then
+                    gameState = 'serve'
+                    sounds['wall_hit']:play()
+                else
+                    gameState = 'start'
+                    sounds['wall_hit']:play()
+                end
+            else
+                gameState = 'play'
+                sounds['wall_hit']:play()
+            end
+        end
+    end
+
+    if key == 'q' then
+        if gameState == 'pause' then
+            love.event.quit()
+        end
     end
 
     if key == 'enter' or key == 'return' then

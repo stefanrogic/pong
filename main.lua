@@ -29,6 +29,7 @@ function love.load()
 
     -- Fonts
     smallFont = love.graphics.newFont('fonts/font.ttf', 8)
+    largeFont = love.graphics.newFont('fonts/font.ttf', 16)
     scoreFont = love.graphics.newFont('fonts/font.ttf', 32)
 
     -- Sounds
@@ -76,9 +77,8 @@ function love.draw()
     love.graphics.clear(40/255, 45/255, 52/255, 255)  -- Clear the screen with a specific color
     love.graphics.setFont(scoreFont)  -- Set the score font
 
-
     -- Set score color if player one has won
-    if gameState == 'done' and playerOneScore >= WINNING_SCORE then
+    if playerOneScore >= WINNING_SCORE then
         love.graphics.setColor(1, 0, 0, 1)  -- Set color to red
     else 
         love.graphics.setColor(90/255, 95/255, 102/255, 1)  -- Set color to lighter shade
@@ -92,7 +92,7 @@ function love.draw()
     )
 
     -- Set score color if player two has won
-    if gameState == 'done' and playerTwoScore >= WINNING_SCORE then
+    if playerTwoScore >= WINNING_SCORE then
         love.graphics.setColor(1, 0, 0, 1)  -- Set color to red
     else 
         love.graphics.setColor(90/255, 95/255, 102/255, 1)  -- Set color to lighter shade
@@ -117,11 +117,11 @@ function love.draw()
             love.graphics.printf("Player Two Wins", 0, VIRTUAL_HEIGHT / 2 - 10, VIRTUAL_WIDTH, 'center')
         end
 
-        love.graphics.printf("Press Enter to Restart", 0, VIRTUAL_HEIGHT / 2 + 10, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Press Enter to Play Again", 0, VIRTUAL_HEIGHT / 2 + 10, VIRTUAL_WIDTH, 'center')
     end
 
-    playerOne:render()                -- Render player one's paddle
-    playerTwo:render()                -- Render player two's paddle
+    playerOne:render()              
+    playerTwo:render()              
 
     if gameState == 'start' then
         love.graphics.setFont(smallFont)  -- Set font to smallFont
@@ -133,8 +133,16 @@ function love.draw()
         love.graphics.printf("Player " .. tostring(servingPlayer) .. "'s Serve! Press Enter to Serve", 0, VIRTUAL_HEIGHT / 2 - 20, VIRTUAL_WIDTH, 'center')
     end
 
-    if gameState == 'start' or gameState == 'play' or gameState == 'serve' then
-        ball:render()                     -- Render the ball
+    if playerOneScore == WINNING_SCORE or playerTwoScore == WINNING_SCORE then
+        -- Do not render the ball if the game is done
+    else 
+        ball:render()             
+    end
+
+    if gameState == 'pause' then
+        love.graphics.setFont(largeFont)  -- Set font to largeFont
+        love.graphics.printf("Game Paused", 0, VIRTUAL_HEIGHT - 50, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Press Q to quit", 0, VIRTUAL_HEIGHT - 30, VIRTUAL_WIDTH, 'center')
     end
 
     if fpsState == "on" then
@@ -192,60 +200,62 @@ function love.update(dt)
         end
 
         ball:update(dt) -- Update ball position based on its velocity
+
+        -- Scoring
+        if ball.x > VIRTUAL_WIDTH then
+            playerOneScore = playerOneScore + 1  -- Player one scores
+            servingPlayer = 2
+
+            ball:reset()
+            playerOne:reset()
+            playerTwo:reset()  
+                        
+            gameState = 'serve'                  -- Change state to start
+
+            sounds['score']:setVolume(0.2)
+            sounds['score']:play()
+        end
+
+        if ball.x < 0 then
+            playerTwoScore = playerTwoScore + 1  -- Player two scores
+            servingPlayer = 1
+
+            ball:reset()
+            playerOne:reset()
+            playerTwo:reset()  
+
+            gameState = 'serve'   
+
+            sounds['score']:setVolume(0.2)
+            sounds['score']:play()
+        end
     end
 
-    -- Scoring
-    if ball.x > VIRTUAL_WIDTH then
-        playerOneScore = playerOneScore + 1  -- Player one scores
-        servingPlayer = 2
+    if gameState == 'serve' or gameState == 'play' or gameState == 'start' then
+        -- Check for winning condition
+        if (playerOneScore >= WINNING_SCORE or playerTwoScore >= WINNING_SCORE) then
+            gameState = 'done'
+        end
 
-        ball:reset()
-        playerOne:reset()
-        playerTwo:reset()  
-                       
-        gameState = 'serve'                  -- Change state to start
+        -- Player movement
+        if love.keyboard.isDown('w') then
+            playerOne.dy = -PADDLE_SPEED  -- Set velocity to move up
+        elseif love.keyboard.isDown('s') then
+            playerOne.dy = PADDLE_SPEED   -- Set velocity to move down
+        else
+            playerOne.dy = 0              -- Stop moving if no key pressed
+        end
 
-        sounds['score']:setVolume(0.2)
-        sounds['score']:play()
+        if love.keyboard.isDown('up') then
+            playerTwo.dy = -PADDLE_SPEED  -- Set velocity to move up
+        elseif love.keyboard.isDown('down') then
+            playerTwo.dy = PADDLE_SPEED   -- Set velocity to move down
+        else
+            playerTwo.dy = 0              -- Stop moving if no key pressed
+        end
+
+        -- Always update paddles (they check their own dy to move)
+        playerOne:update(dt)
+        playerTwo:update(dt)
     end
-
-    if ball.x < 0 then
-        playerTwoScore = playerTwoScore + 1  -- Player two scores
-        servingPlayer = 1
-
-        ball:reset()
-        playerOne:reset()
-        playerTwo:reset()  
-
-        gameState = 'serve'   
-
-        sounds['score']:setVolume(0.2)
-        sounds['score']:play()
-    end
-
-    -- Check for winning condition
-    if (playerOneScore >= WINNING_SCORE or playerTwoScore >= WINNING_SCORE) then
-        gameState = 'done'
-    end
-
-    -- Player movement
-    if love.keyboard.isDown('w') then
-        playerOne.dy = -PADDLE_SPEED  -- Set velocity to move up
-    elseif love.keyboard.isDown('s') then
-        playerOne.dy = PADDLE_SPEED   -- Set velocity to move down
-    else
-        playerOne.dy = 0              -- Stop moving if no key pressed
-    end
-
-    if love.keyboard.isDown('up') then
-        playerTwo.dy = -PADDLE_SPEED  -- Set velocity to move up
-    elseif love.keyboard.isDown('down') then
-        playerTwo.dy = PADDLE_SPEED   -- Set velocity to move down
-    else
-        playerTwo.dy = 0              -- Stop moving if no key pressed
-    end
-
-    -- Always update paddles (they check their own dy to move)
-    playerOne:update(dt)
-    playerTwo:update(dt)
 end
