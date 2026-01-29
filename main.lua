@@ -59,30 +59,43 @@ function love.draw()
 
     love.graphics.clear(40/255, 45/255, 52/255, 255)  -- Clear the screen with a specific color
 
-    love.graphics.setFont(smallFont)  -- Set the loaded font as the current font
-    love.graphics.printf(             -- Draws text on the screen
-        "Hello, Pong!",               -- Text to print
-        0,                            -- X position
-        10,                           -- Y position
-        VIRTUAL_WIDTH,                -- Maximum width 
-        "center"                      -- Alignment, it can be "left", "right", or "center"
-    )
-
     love.graphics.setFont(scoreFont)  -- Set the score font
+    love.graphics.setColor(90/255, 95/255, 102/255, 1)  -- Set color to lighter shade
     love.graphics.print(              -- Draw player one score
         tostring(playerOneScore),     -- Text to print (converted to string)
         VIRTUAL_WIDTH / 2 - 50,       -- X position
-        VIRTUAL_HEIGHT / 3            -- Y position
+        10            -- Y position
     )
     love.graphics.print(              -- Draw player two score
         tostring(playerTwoScore),     -- Text to print (converted to string)
         VIRTUAL_WIDTH / 2 + 30,       -- X position
-        VIRTUAL_HEIGHT / 3            -- Y position
+        10            -- Y position
     )
+    love.graphics.setColor(1, 1, 1, 1) -- Reset color to white
+
+    if gameState == 'done' then
+        love.graphics.setFont(smallFont)  -- Set font to smallFont
+
+        if playerOneScore >= WINNING_SCORE then
+            love.graphics.printf("Player One Wins", 0, VIRTUAL_HEIGHT / 2 - 10, VIRTUAL_WIDTH, 'center')
+        else
+            love.graphics.printf("Player Two Wins", 0, VIRTUAL_HEIGHT / 2 - 10, VIRTUAL_WIDTH, 'center')
+        end
+
+        love.graphics.printf("Press Enter to Restart", 0, VIRTUAL_HEIGHT / 2 + 10, VIRTUAL_WIDTH, 'center')
+    end
 
     playerOne:render()                -- Render player one's paddle
     playerTwo:render()                -- Render player two's paddle
-    ball:render()                     -- Render the ball
+
+    if gameState == 'start' then
+        love.graphics.setFont(smallFont)  -- Set font to smallFont
+        love.graphics.printf("Press Enter to Serve", 0, VIRTUAL_HEIGHT / 2 - 20, VIRTUAL_WIDTH, 'center')
+    end
+
+    if gameState == 'start' or gameState == 'play' then
+        ball:render()                     -- Render the ball
+    end
 
     if fpsState == "on" then
         displayFPS()                  -- Display FPS for debugging
@@ -101,11 +114,25 @@ function love.update(dt)
         if ball:colides(playerOne) then
             ball.dx = -ball.dx * BALL_ACCELERATION  -- Reverse horizontal direction and increase speed
             ball.x = playerOne.x + playerOne.width  -- Reposition ball outside paddle (center-based)
+
+             -- Keep velocity going in the same direction, but randomize it
+            if ball.dy < 0 then
+                ball.dy = -math.random(100, BALL_SPEED)
+            else
+                ball.dy = math.random(100, BALL_SPEED)
+            end
         end
 
         if ball:colides(playerTwo) then
             ball.dx = -ball.dx * BALL_ACCELERATION  -- Reverse horizontal direction and increase speed
             ball.x = playerTwo.x - ball.width       -- Reposition ball outside paddle (center-based)
+
+            -- Keep velocity going in the same direction, but randomize it
+            if ball.dy < 0 then
+                ball.dy = -math.random(100, BALL_SPEED)
+            else
+                ball.dy = math.random(100, BALL_SPEED)
+            end
         end
 
         if ball.y <= 0 then
@@ -121,7 +148,29 @@ function love.update(dt)
         ball:update(dt) -- Update ball position based on its velocity
     end
 
-    -- Player one movement
+    -- Scoring
+    if ball.x > VIRTUAL_WIDTH then
+        playerOneScore = playerOneScore + 1  -- Player one scores
+        ball:reset()
+        playerOne:reset()
+        playerTwo:reset()                 -- Reset player two position
+        gameState = 'start'                  -- Change state to start
+    end
+
+    if ball.x < 0 then
+        playerTwoScore = playerTwoScore + 1  -- Player two scores
+        ball:reset()
+        playerOne:reset()
+        playerTwo:reset()                 -- Reset player two position
+        gameState = 'start'                  -- Change state to start
+    end
+
+    -- Check for winning condition
+    if (playerOneScore >= WINNING_SCORE or playerTwoScore >= WINNING_SCORE) then
+        gameState = 'done'
+    end
+
+    -- Player movement
     if love.keyboard.isDown('w') then
         playerOne.dy = -PADDLE_SPEED  -- Set velocity to move up
     elseif love.keyboard.isDown('s') then
@@ -130,7 +179,6 @@ function love.update(dt)
         playerOne.dy = 0              -- Stop moving if no key pressed
     end
 
-    -- Player two movement
     if love.keyboard.isDown('up') then
         playerTwo.dy = -PADDLE_SPEED  -- Set velocity to move up
     elseif love.keyboard.isDown('down') then

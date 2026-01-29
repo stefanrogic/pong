@@ -18,14 +18,26 @@ function love.keypressed(key)
         if gameState == 'start' then
             gameState = 'play'  -- Change state to play
             -- Give ball initial velocity when starting
-            ball.dx = math.random(2) == 1 and BALL_SPEED or -BALL_SPEED
-            ball.dy = BALL_SPEED
-        elseif gameState == 'play' then
+            ball.dx = BALL_SPEED
+            ball.dy = math.random(100, BALL_SPEED)
+        elseif gameState == 'done' then
+            playerOneScore = 0
+            playerTwoScore = 0
             gameState = 'start'  -- Change state to start
             ball:reset()         -- Reset ball using its method
             playerOne:reset()       -- Reset paddles using their method
             playerTwo:reset()       -- Reset paddles using their method
         end
+    end
+
+    if key == 'r' then
+        -- Reset scores and game state
+        playerOneScore = 0
+        playerTwoScore = 0
+        gameState = 'start'
+        ball:reset()
+        playerOne:reset()
+        playerTwo:reset()
     end
 
     if key == '`' then
