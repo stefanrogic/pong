@@ -1,3 +1,11 @@
+--[[
+    Function is called whenever the window is resized.
+    In this case we're using it to resize our virtual resolution.
+]]
+function love.resize(w, h)
+    push:resize(w, h)
+end
+
 function displayFPS()
     love.graphics.setFont(smallFont)  -- Set the font to smallFont
     love.graphics.setColor(0, 1, 0, 1) -- Set color to green
