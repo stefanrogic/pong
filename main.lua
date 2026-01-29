@@ -141,8 +141,9 @@ function love.draw()
 
     if gameState == 'pause' then
         love.graphics.setFont(largeFont)  -- Set font to largeFont
-        love.graphics.printf("Game Paused", 0, VIRTUAL_HEIGHT - 50, VIRTUAL_WIDTH, 'center')
-        love.graphics.printf("Press Q to quit", 0, VIRTUAL_HEIGHT - 30, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Game Paused", 0, VIRTUAL_HEIGHT - 70, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Press R to Restart", 0, VIRTUAL_HEIGHT - 50, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Press Q to Quit", 0, VIRTUAL_HEIGHT - 30, VIRTUAL_WIDTH, 'center')
     end
 
     if fpsState == "on" then

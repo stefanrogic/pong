@@ -70,13 +70,15 @@ function love.keypressed(key)
     end
 
     if key == 'r' then
-        -- Reset scores and game state
-        playerOneScore = 0
-        playerTwoScore = 0
-        gameState = 'start'
-        ball:reset()
-        playerOne:reset()
-        playerTwo:reset()
+        if gameState == 'pause' then
+            -- Reset scores and game state
+            playerOneScore = 0
+            playerTwoScore = 0
+            gameState = 'start'
+            ball:reset()
+            playerOne:reset()
+            playerTwo:reset()
+        end
     end
 
     if key == '`' then
