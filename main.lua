@@ -74,21 +74,40 @@ function love.draw()
 
 
     love.graphics.clear(40/255, 45/255, 52/255, 255)  -- Clear the screen with a specific color
-
     love.graphics.setFont(scoreFont)  -- Set the score font
-    love.graphics.setColor(90/255, 95/255, 102/255, 1)  -- Set color to lighter shade
+
+
+    -- Set score color if player one has won
+    if gameState == 'done' and playerOneScore >= WINNING_SCORE then
+        love.graphics.setColor(1, 0, 0, 1)  -- Set color to red
+    else 
+        love.graphics.setColor(90/255, 95/255, 102/255, 1)  -- Set color to lighter shade
+    end
+
+    -- Draw player one score
     love.graphics.print(              -- Draw player one score
         tostring(playerOneScore),     -- Text to print (converted to string)
         VIRTUAL_WIDTH / 2 - 50,       -- X position
         10            -- Y position
     )
+
+    -- Set score color if player two has won
+    if gameState == 'done' and playerTwoScore >= WINNING_SCORE then
+        love.graphics.setColor(1, 0, 0, 1)  -- Set color to red
+    else 
+        love.graphics.setColor(90/255, 95/255, 102/255, 1)  -- Set color to lighter shade
+    end
+
+    -- Draw player two score
     love.graphics.print(              -- Draw player two score
         tostring(playerTwoScore),     -- Text to print (converted to string)
         VIRTUAL_WIDTH / 2 + 30,       -- X position
         10            -- Y position
     )
+
     love.graphics.setColor(1, 1, 1, 1) -- Reset color to white
 
+    -- When game is over display winning message
     if gameState == 'done' then
         love.graphics.setFont(smallFont)  -- Set font to smallFont
 
