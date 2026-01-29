@@ -41,6 +41,8 @@ function love.load()
     playerOneScore = 0  -- Initialize player one score
     playerTwoScore = 0  -- Initialize player two score
 
+    servingPlayer = 1  -- Player one starts serving
+
     -- Initialize player paddles and ball
     playerOne = Paddle(10, VIRTUAL_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT)
     playerTwo = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT)
@@ -93,7 +95,12 @@ function love.draw()
         love.graphics.printf("Press Enter to Serve", 0, VIRTUAL_HEIGHT / 2 - 20, VIRTUAL_WIDTH, 'center')
     end
 
-    if gameState == 'start' or gameState == 'play' then
+    if gameState == 'serve' then
+        love.graphics.setFont(smallFont)  -- Set font to smallFont
+        love.graphics.printf("Player " .. tostring(servingPlayer) .. "'s Serve! Press Enter to Serve", 0, VIRTUAL_HEIGHT / 2 - 20, VIRTUAL_WIDTH, 'center')
+    end
+
+    if gameState == 'start' or gameState == 'play' or gameState == 'serve' then
         ball:render()                     -- Render the ball
     end
 
@@ -151,18 +158,20 @@ function love.update(dt)
     -- Scoring
     if ball.x > VIRTUAL_WIDTH then
         playerOneScore = playerOneScore + 1  -- Player one scores
+        servingPlayer = 2
         ball:reset()
         playerOne:reset()
         playerTwo:reset()                 -- Reset player two position
-        gameState = 'start'                  -- Change state to start
+        gameState = 'serve'                  -- Change state to start
     end
 
     if ball.x < 0 then
         playerTwoScore = playerTwoScore + 1  -- Player two scores
+        servingPlayer = 1
         ball:reset()
         playerOne:reset()
         playerTwo:reset()                 -- Reset player two position
-        gameState = 'start'                  -- Change state to start
+        gameState = 'serve'                  -- Change state to start
     end
 
     -- Check for winning condition

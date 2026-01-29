@@ -15,7 +15,16 @@ function love.keypressed(key)
     end
 
     if key == 'enter' or key == 'return' then
-        if gameState == 'start' then
+        if gameState == 'serve' then
+            gameState = 'play'
+            ball.dy = math.random(-BALL_SPEED / 2, BALL_SPEED / 2)
+            
+            if servingPlayer == 1 then
+                ball.dx = BALL_SPEED
+            else
+                ball.dx = -BALL_SPEED
+            end
+        elseif gameState == 'start' then
             gameState = 'play'  -- Change state to play
             -- Give ball initial velocity when starting
             ball.dx = math.random(2) == 1 and -BALL_SPEED or BALL_SPEED
