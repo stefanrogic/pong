@@ -65,13 +65,12 @@ end
     Called each frame after update, used to draw things to the screen.
 ]]
 function love.draw()
-    push:apply('start')  -- Begin rendering at virtual resolution
+    push:apply('start') -- Begin rendering at virtual resolution
 
     -- Play background music
     sounds['music']:setLooping(true)
     sounds['music']:setVolume(0.05)
     sounds['music']:play()
-
 
     love.graphics.clear(40/255, 45/255, 52/255, 255)  -- Clear the screen with a specific color
     love.graphics.setFont(scoreFont)  -- Set the score font
@@ -157,9 +156,9 @@ function love.update(dt)
 
              -- Keep velocity going in the same direction, but randomize it
             if ball.dy < 0 then
-                ball.dy = -math.random(BALL_SPEED / 2, BALL_SPEED)
+                ball.dy = -math.random(PADDLE_INACCURACY, BALL_SPEED)
             else
-                ball.dy = math.random(BALL_SPEED / 2, BALL_SPEED)
+                ball.dy = math.random(PADDLE_INACCURACY, BALL_SPEED)
             end
 
             sounds['paddle_hit']:play()  -- Play paddle hit sound
@@ -171,9 +170,9 @@ function love.update(dt)
 
             -- Keep velocity going in the same direction, but randomize it
             if ball.dy < 0 then
-                ball.dy = -math.random(BALL_SPEED / 2, BALL_SPEED)
+                ball.dy = -math.random(PADDLE_INACCURACY, BALL_SPEED)
             else
-                ball.dy = math.random(BALL_SPEED / 2, BALL_SPEED)
+                ball.dy = math.random(PADDLE_INACCURACY, BALL_SPEED)
             end
 
             sounds['paddle_hit']:play()  -- Play paddle hit sound

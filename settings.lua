@@ -2,6 +2,7 @@ WINNING_SCORE = 5
 
 -- Paddle constants
 PADDLE_SPEED = 400 -- Multiplied by dt to get pixels per second
+PADDLE_INACCURACY = 100 -- paddle inaccuracy factor on ball hit
 PADDLE_HEIGHT = 50
 PADDLE_WIDTH = 5
 
