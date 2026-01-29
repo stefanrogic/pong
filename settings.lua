@@ -1,3 +1,5 @@
+WINNING_SCORE = 5
+
 -- Paddle constants
 PADDLE_SPEED = 400 -- Multiplied by dt to get pixels per second
 PADDLE_HEIGHT = 50
