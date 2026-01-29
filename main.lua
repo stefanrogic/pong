@@ -117,9 +117,9 @@ function love.update(dt)
 
              -- Keep velocity going in the same direction, but randomize it
             if ball.dy < 0 then
-                ball.dy = -math.random(100, BALL_SPEED)
+                ball.dy = -math.random(BALL_SPEED / 2, BALL_SPEED)
             else
-                ball.dy = math.random(100, BALL_SPEED)
+                ball.dy = math.random(BALL_SPEED / 2, BALL_SPEED)
             end
         end
 
@@ -129,9 +129,9 @@ function love.update(dt)
 
             -- Keep velocity going in the same direction, but randomize it
             if ball.dy < 0 then
-                ball.dy = -math.random(100, BALL_SPEED)
+                ball.dy = -math.random(BALL_SPEED / 2, BALL_SPEED)
             else
-                ball.dy = math.random(100, BALL_SPEED)
+                ball.dy = math.random(BALL_SPEED / 2, BALL_SPEED)
             end
         end
 

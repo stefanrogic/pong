@@ -19,7 +19,7 @@ function love.keypressed(key)
             gameState = 'play'  -- Change state to play
             -- Give ball initial velocity when starting
             ball.dx = BALL_SPEED
-            ball.dy = math.random(100, BALL_SPEED)
+            ball.dy = math.random(BALL_SPEED / 2, BALL_SPEED)
         elseif gameState == 'done' then
             playerOneScore = 0
             playerTwoScore = 0
