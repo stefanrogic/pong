@@ -30,6 +30,14 @@ function love.load()
     smallFont = love.graphics.newFont('fonts/font.ttf', 8)
     scoreFont = love.graphics.newFont('fonts/font.ttf', 32)
 
+    -- Sounds
+    sounds = {
+        ['paddle_hit'] = love.audio.newSource('sounds/paddle_hit.wav', 'static'),
+        ['score'] = love.audio.newSource('sounds/score.wav', 'static'),
+        ['wall_hit'] = love.audio.newSource('sounds/wall_hit.wav', 'static'),
+        ['music'] = love.audio.newSource('sounds/music.mp3', 'static')
+    }
+
     -- Setup
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, { -- Set the window size and options) 
         -- Window configuration options, could be done separate in config.lua
@@ -58,6 +66,12 @@ end
 ]]
 function love.draw()
     push:apply('start')  -- Begin rendering at virtual resolution
+
+    -- Play background music
+    sounds['music']:setLooping(true)
+    sounds['music']:setVolume(0.05)
+    sounds['music']:play()
+
 
     love.graphics.clear(40/255, 45/255, 52/255, 255)  -- Clear the screen with a specific color
 
@@ -128,6 +142,8 @@ function love.update(dt)
             else
                 ball.dy = math.random(BALL_SPEED / 2, BALL_SPEED)
             end
+
+            sounds['paddle_hit']:play()  -- Play paddle hit sound
         end
 
         if ball:colides(playerTwo) then
@@ -140,16 +156,20 @@ function love.update(dt)
             else
                 ball.dy = math.random(BALL_SPEED / 2, BALL_SPEED)
             end
+
+            sounds['paddle_hit']:play()  -- Play paddle hit sound
         end
 
         if ball.y <= 0 then
             ball.y = 0
             ball.dy = -ball.dy  -- Reverse vertical direction
+            sounds['wall_hit']:play()  -- Play wall hit sound
         end
 
         if ball.y >= VIRTUAL_HEIGHT - ball.height then
             ball.y = VIRTUAL_HEIGHT - ball.height
             ball.dy = -ball.dy  -- Reverse vertical direction
+            sounds['wall_hit']:play()  -- Play wall hit sound
         end
 
         ball:update(dt) -- Update ball position based on its velocity
@@ -159,19 +179,29 @@ function love.update(dt)
     if ball.x > VIRTUAL_WIDTH then
         playerOneScore = playerOneScore + 1  -- Player one scores
         servingPlayer = 2
+
         ball:reset()
         playerOne:reset()
-        playerTwo:reset()                 -- Reset player two position
+        playerTwo:reset()  
+                       
         gameState = 'serve'                  -- Change state to start
+
+        sounds['score']:setVolume(0.2)
+        sounds['score']:play()
     end
 
     if ball.x < 0 then
         playerTwoScore = playerTwoScore + 1  -- Player two scores
         servingPlayer = 1
+
         ball:reset()
         playerOne:reset()
-        playerTwo:reset()                 -- Reset player two position
-        gameState = 'serve'                  -- Change state to start
+        playerTwo:reset()  
+
+        gameState = 'serve'   
+
+        sounds['score']:setVolume(0.2)
+        sounds['score']:play()
     end
 
     -- Check for winning condition
