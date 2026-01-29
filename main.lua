@@ -43,7 +43,7 @@ function love.load()
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, { -- Set the window size and options) 
         -- Window configuration options, could be done separate in config.lua
         fullscreen = false,
-        resizable = false,
+        resizable = true,
         vsync = true
     })
 
